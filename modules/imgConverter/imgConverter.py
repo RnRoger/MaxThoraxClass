@@ -1,5 +1,6 @@
 from keras_preprocessing.image import img_to_array
 from keras_preprocessing.image import load_img
+from keras import layers
 import os
 import numpy as np
 import re
@@ -15,7 +16,7 @@ def imgConverter(dir = "[PATH TO MAP WITH IMAGES]"):
   for filename in os.listdir(dir):
       if filename.endswith(".png"):
         img = load_img(dir+os.sep+filename,target_size=(1024,1024))
-        img = img_to_array(img)
+        img = img_to_array(img).reshape(1,1024,1024,3)
 
         names.append(filename)
         disease = diseaseDict[filename]
@@ -38,7 +39,7 @@ def imgConverter(dir = "[PATH TO MAP WITH IMAGES]"):
   return array, names, diseases
 
 def getDDict():
-  file = open("modules/imgConverter/overview.csv")
+  file = open("overviewTest.csv")
   dict = {}
   for rule in file:
     part = rule.split(",")
@@ -46,9 +47,4 @@ def getDDict():
 
   return dict
 
-x, ids, prey = imgConverter("data/dataset")
-print(x)
-input("next")
-print(ids)
-input("next")
-print(prey)
+
