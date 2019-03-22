@@ -5,7 +5,7 @@ import os
 import numpy as np
 import re
 
-def imgConverter(dir = "[PATH TO MAP WITH IMAGES]"):
+def imgConverter(dir = "[PATH TO MAP WITH IMAGES]",imgsize = 200):
   regexp = re.compile("(atelectasis|infiltration|nodule)")
 
   first = True
@@ -15,8 +15,8 @@ def imgConverter(dir = "[PATH TO MAP WITH IMAGES]"):
   diseaseDict = getDDict()
   for filename in os.listdir(dir):
       if filename.endswith(".png"):
-        img = load_img(dir+os.sep+filename,target_size=(1024,1024))
-        img = img_to_array(img).reshape(1,1024,1024,3)
+        img = load_img(dir+os.sep+filename,target_size=(imgsize,imgsize))
+        img = img_to_array(img).reshape(1,imgsize,imgsize,3)
 
         names.append(filename)
         disease = diseaseDict[filename]
