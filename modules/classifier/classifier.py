@@ -21,6 +21,7 @@ model_vgg16_conv.summary()
 imgsize = 200
 batchsize = 5
 no_epoch = 10
+use_multiprocessing = False
 
 files, pre_y = ei.extractImgFileNames("testdata","testdata/overviewTest.csv")
 
@@ -65,7 +66,7 @@ my_model.fit_generator(generator = xGen,
                        steps_per_epoch = (int(len(files)) // batchsize),
                        epochs = no_epoch,
                        verbose = 1,
-                       use_multiprocessing = False,
+                       use_multiprocessing = use_multiprocessing,
                        workers = mp.cpu_count(),
                        max_queue_size = 8)
 print(datetime.datetime.now()-i)
