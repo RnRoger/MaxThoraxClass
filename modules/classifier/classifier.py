@@ -7,15 +7,22 @@ from keras.models import Model
 import keras
 import numpy as np
 import h5py
-import imgConverter as ic
+from generator import XRay_Generator as xg
+import os
+from fileNamesExtractor import extractImgFileNames as ei
+import multiprocessing as mp
+import datetime
+
 
 #Get back the convolutional part of a VGG network trained on ImageNet
 model_vgg16_conv = VGG16(weights='imagenet', include_top=False)
 model_vgg16_conv.summary()
 
 imgsize = 200
+batchsize = 5
+no_epoch = 10
 
-x, ids, pre_y = ic.imgConverter("data",imgsize)
+files, pre_y = ei.extractImgFileNames("testdata","testdata/overviewTest.csv")
 
 ydict = {}
 counter = 0
@@ -30,6 +37,7 @@ ydict = dict((v,k) for k,v in ydict.items())
 
 y = keras.utils.to_categorical(y,3)
 
+xGen = xg.XRay_Generator(files,y,batchsize,imgsize)
 
 input = Input(shape=(imgsize,imgsize,3),name = 'image_input')
 
@@ -51,6 +59,13 @@ my_model.compile(optimizer=Adam, loss ='categorical_crossentropy', metrics=['acc
 #In the summary, weights and layers from VGG part will be hidden, but they will be fit during the training
 my_model.summary()
 
-
+i = datetime.datetime.now()
 #Then training with your data !
-my_model.fit(x = x, y=y, epochs=10,verbose=1)
+my_model.fit_generator(generator = xGen,
+                       steps_per_epoch = (int(len(files)) // batchsize),
+                       epochs = no_epoch,
+                       verbose = 1,
+                       use_multiprocessing = False,
+                       workers = mp.cpu_count(),
+                       max_queue_size = 8)
+print(datetime.datetime.now()-i)
