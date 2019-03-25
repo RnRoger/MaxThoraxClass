@@ -1,18 +1,14 @@
 from keras.applications.vgg16 import VGG16
-from keras.preprocessing import image
-from keras.applications.vgg16 import preprocess_input
 from keras.layers import Input, Flatten, Dense
 from keras.optimizers import Adam
 from keras.models import Model
 import keras
 import tensorflow as tf
-import numpy as np
-import h5py
 from generator import XRay_Generator as xg
-import os
 from fileNamesExtractor import extractImgFileNames as ei
 import multiprocessing as mp
 import datetime
+import os
 
 def getGen(files,pre_y, batchsize, imgsize):
     ydict = {}
@@ -39,7 +35,7 @@ if __name__ == "__main__":
     imgsize = 200
     batchsize = 5
     no_epoch = 10
-    use_multiprocessing = True
+    use_multiprocessing = False
 
     trainFiles, trainPre_y, validateFiles, validatePre_y, testFiles, testPre_y = ei.extractImgFileNames("testdata","testdata/overviewTest.csv")
 
@@ -82,3 +78,10 @@ if __name__ == "__main__":
 
     score = my_model.evaluate_generator(testGen, len(testFiles) / batchsize, workers= mp.cpu_count())
     print("Loss: ", score[0], "Accuracy: ", score[1])
+
+    model_json = my_model.to_json()
+    with open("models"+os.sep()+datetime.datetime.today().strftime('%Y-%m-%d')+".json", "w") as json_file:
+        json_file.write(model_json)
+    # serialize weights to HDF5
+    my_model.save_weights("model.h5")
+    print("Saved model to disk")
