@@ -2,7 +2,7 @@ from skimage.io import imread
 from skimage.transform import resize
 from keras.utils import Sequence
 import numpy as np
-
+from keras.preprocessing.image import ImageDataGenerator
 class XRay_Generator(Sequence):
 
     def __init__(self, image_filenames, labels, batch_size, imgSize):
