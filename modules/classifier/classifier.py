@@ -1,6 +1,7 @@
 from keras.applications.vgg16 import VGG16
+from keras.applications.
 from keras.layers import Input, Flatten, Dense
-from keras.optimizers import Adam
+from keras.optimizers import Adam, SGD
 from keras.models import Model
 import keras
 import tensorflow as tf
@@ -33,11 +34,12 @@ if __name__ == "__main__":
     model_vgg16_conv.summary()
 
     imgsize = 200
-    batchsize = 5
-    no_epoch = 10
-    use_multiprocessing = False
+    batchsize = 3
+    no_epoch = 15
+    use_multiprocessing = True
 
-    trainFiles, trainPre_y, validateFiles, validatePre_y, testFiles, testPre_y = ei.extractImgFileNames("testdata","testdata/overviewTest.csv")
+    trainFiles, trainPre_y, validateFiles, \
+    validatePre_y, testFiles, testPre_y = ei.extractImgFileNames("dataset","dataset/overview.csv")
 
     trainGen, trainY = getGen(trainFiles,trainPre_y, batchsize, imgsize)
     validateGen, validateY = getGen(validateFiles, validatePre_y, batchsize, imgsize)
@@ -73,14 +75,14 @@ if __name__ == "__main__":
                            validation_data= validateGen,
                            validation_steps= (int(len(validateFiles)) // batchsize),
                            workers = mp.cpu_count(),
-                           max_queue_size = 8)
+                           max_queue_size = 1)
     print(datetime.datetime.now()-i)
 
     score = my_model.evaluate_generator(testGen, len(testFiles) / batchsize, workers= mp.cpu_count())
     print("Loss: ", score[0], "Accuracy: ", score[1])
 
     model_json = my_model.to_json()
-    with open("models"+os.sep()+datetime.datetime.today().strftime('%Y-%m-%d')+".json", "w") as json_file:
+    with open("models"+os.sep+datetime.datetime.today().strftime('%Y-%m-%d')+".json", "w") as json_file:
         json_file.write(model_json)
     # serialize weights to HDF5
     my_model.save_weights("model.h5")
