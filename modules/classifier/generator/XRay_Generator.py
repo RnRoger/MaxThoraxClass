@@ -3,6 +3,8 @@ from skimage.transform import resize
 from keras.utils import Sequence
 import numpy as np
 from keras.preprocessing.image import ImageDataGenerator
+
+# Object that gets a batch of x-rays during training, validation en testing
 class XRay_Generator(Sequence):
 
     def __init__(self, image_filenames, labels, batch_size, imgSize):
@@ -18,4 +20,5 @@ class XRay_Generator(Sequence):
 
         return np.array([
             resize(imread(file_name), (self.imgSize, self.imgSize,3))
-for file_name in batch_x]), np.array(batch_y)
+            for file_name in batch_x]), \
+               np.array(batch_y)

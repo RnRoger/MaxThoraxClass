@@ -8,8 +8,10 @@ def fileExtractor(inputPath = os.getcwd(),
                   diseasesRe = "(atelectasis|infiltration|nodule)",
                   indexPath = "Data_Entry_2017.csv",
                   overviewPath = "overview.csv"):
-
-    os.makedirs(outputPath)
+    try:
+        os.path.isdir(outputPath)
+    except Exception as e:
+        os.makedirs(outputPath)
 
     regexp = re.compile(diseasesRe)
 
