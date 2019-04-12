@@ -1,10 +1,10 @@
 import os
-import re
 import random
 
-def extractImgFileNames(dir = "[PATH TO MAP WITH IMAGES]",
+# Function to gather the filenames and diseases, and divide them in
+# trainingsset, validationset and testset
+def extractImgFileNames(dir = "[PATH TO DIRECTORY WITH IMAGES]",
                         overviewPath = "[PATH TO CSV WITH DISEASES]"):
-  regexp = re.compile("(atelectasis|infiltration|nodule)")
 
   filenames = [[],[],[]]
   indexDict = {
@@ -24,6 +24,7 @@ def extractImgFileNames(dir = "[PATH TO MAP WITH IMAGES]",
   x,y = sortData(filenames)
   return x[0], y[0], x[1], y[1], x[2], y[2]
 
+# Create a dictionary that contains filenames and diseases
 def getDDict(overviewPath):
   file = open(overviewPath)
   dict = {}
@@ -33,6 +34,7 @@ def getDDict(overviewPath):
 
   return dict
 
+# Sort the data into multiple datasets
 def sortData(filenames):
   sortArray = [[],[],[]]
   diseases = [[],[],[]]
@@ -80,7 +82,7 @@ def sortData(filenames):
   return sortArray, diseases
 
 
-
+# Extract items randomly from array
 def getRandomPop(count,array):
   newArray = []
   for i in range(0,count):

@@ -1,6 +1,5 @@
 from keras.applications.vgg16 import VGG16
-from keras.applications.
-from keras.layers import Input, Flatten, Dense
+from keras.layers import Input, Flatten, Dense, Dropout
 from keras.optimizers import Adam, SGD
 from keras.models import Model
 import keras
@@ -33,13 +32,13 @@ if __name__ == "__main__":
     model_vgg16_conv = VGG16(weights='imagenet', include_top=False)
     model_vgg16_conv.summary()
 
-    imgsize = 200
-    batchsize = 3
-    no_epoch = 15
-    use_multiprocessing = True
+    imgsize = 255
+    batchsize = 6
+    no_epoch = 1
+    use_multiprocessing = False
 
     trainFiles, trainPre_y, validateFiles, \
-    validatePre_y, testFiles, testPre_y = ei.extractImgFileNames("dataset","dataset/overview.csv")
+    validatePre_y, testFiles, testPre_y = ei.extractImgFileNames(r"D:\ChestXray-NIHCC\dataset",r"D:\ChestXray-NIHCC\overview.csv")
 
     trainGen, trainY = getGen(trainFiles,trainPre_y, batchsize, imgsize)
     validateGen, validateY = getGen(validateFiles, validatePre_y, batchsize, imgsize)
@@ -54,13 +53,15 @@ if __name__ == "__main__":
     #Add the fully-connected layers
     x1 = Flatten(name='flatten')(output_vgg16_conv)
     x1 = Dense(200, activation='relu', name='fc1')(x1)
+    x1 = Dropout(0.1)(x1)
     x1 = Dense(200, activation='relu', name='fc2')(x1)
+    x1 = Dropout(0.1)(x1)
     x1 = Dense(3, activation='softmax', name='predictions')(x1)
 
     #Create your own model
     my_model = Model(input=input, output=x1)
 
-    Adam = Adam(lr=.0001)
+    Adam = Adam(lr=.001)
     my_model.compile(optimizer=Adam, loss ='categorical_crossentropy', metrics=['accuracy'])
     #In the summary, weights and layers from VGG part will be hidden, but they will be fit during the training
     my_model.summary()
